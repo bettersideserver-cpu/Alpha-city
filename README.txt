@@ -50,22 +50,32 @@ STILL TO REPLACE (marked TODO on the page)
 Send the real ones and they can be swapped in.
 
 JOURNEY PLAYBACK
-The four WebM scenes are controlled by scrolling through the sticky Journey
-section. Each scene scrubs from its first frame to its last frame before the
-crossfade to the next scene begins. After Gardens, scrolling raises a full-screen
-Masterplan graphic before the section content appears. Scrolling back reverses
-the sequence.
+The opening now contains all four scroll-controlled WebP sequences in a single
+sticky stage: 01 (210 frames), 02 (216), 03 (288), and 04 (288). The hero text
+fades out with an 8px lift midway through sequence 01. The dark hero gradients
+fade away at the same time, leaving a light 4% wash over the imagery.
+
+Sequence 02 dissolves directly into sequence 03, followed by sequence 04.
+There is no content interlude or pause between the sequences. All frames, fades and transitions follow the scroll
+position and reverse when scrolling back. There is no timed playback.
+
+The old, separate four-video Journey block has been removed. The original
+Masterplan, Clubhouse & Interiors, Elevations, and enquiry/footer remain.
 
 MEDIA LOADING
-The page does not attach every video source on startup. The first Journey film
-loads as its section approaches. Each following film loads near the end of the
-current scene. Clubhouse films load only when the Clubhouse section is visible
-and that film is selected; other films keep their poster images. Opening WebP
-frames are fetched in a small window around the current scroll position.
+WebP frames load in a bounded window around the scroll position, with the next
+scene's opening prepared before a dissolve. Obsolete queued requests are
+discarded after fast scrolling. Clubhouse films still load only when that
+existing showcase is visible and a film is selected.
 
 OPENING
 On a fresh visit the first sequence frame stays still with the Alpha City logo
-centered. Scrolling advances the 210-frame sequence while the opening stays
-full-screen, and scrolling back reverses it. The first scroll also reveals the
-existing hero content. The original JPG frames remain in 01/; the site serves
-the WebP copies from images/sequence-01/ at the same resolution.
+centered. The first scroll reveals the original hero content. The original JPG
+frames remain in 01/, 02/, 03/, and 04/; the page uses their 1920x1080 WebP
+copies in images/sequence-01/ through images/sequence-04/.
+
+The additions live in assets/hero-sequence-player.js and
+assets/sequence-journey.css.
+To regenerate missing WebP frames for 02–04, run:
+  python scripts/convert-sequences.py
+This requires Pillow and preserves the original JPGs.
