@@ -56,6 +56,13 @@ crossfade to the next scene begins. After Gardens, scrolling raises a full-scree
 Masterplan graphic before the section content appears. Scrolling back reverses
 the sequence.
 
+MEDIA LOADING
+The page does not attach every video source on startup. The first Journey film
+loads as its section approaches. Each following film loads near the end of the
+current scene. Clubhouse films load only when the Clubhouse section is visible
+and that film is selected; other films keep their poster images. Opening WebP
+frames are fetched in a small window around the current scroll position.
+
 OPENING
 On a fresh visit the first sequence frame stays still with the Alpha City logo
 centered. Scrolling advances the 210-frame sequence while the opening stays

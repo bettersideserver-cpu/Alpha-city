@@ -12,9 +12,21 @@ window.setupJourneyScroll = function setupJourneyScroll({
   const playbackEnd = 0.88;
   const pending = new Array(count).fill(null);
   const seeking = new Array(count).fill(false);
+  const loaded = new Array(count).fill(false);
   let frame = 0;
   let currentScene = -1;
   let disposed = false;
+
+  function loadClip(index) {
+    const video = videos[index];
+    if (!video || loaded[index]) return;
+    loaded[index] = true;
+    video.querySelectorAll("source[data-src]").forEach((source) => {
+      source.src = source.dataset.src;
+    });
+    video.preload = "auto";
+    video.load();
+  }
 
   function seek(index, fraction) {
     const video = videos[index];
@@ -53,8 +65,9 @@ window.setupJourneyScroll = function setupJourneyScroll({
   function update() {
     frame = 0;
     if (disposed) return;
+    const bounds = section.getBoundingClientRect();
     const travel = Math.max(1, section.offsetHeight - window.innerHeight);
-    const raw = clamp(-section.getBoundingClientRect().top / travel);
+    const raw = clamp(-bounds.top / travel);
     const position = Math.min(count - 0.000001, raw * count);
     const scene = Math.floor(position);
     const local = position - scene;
@@ -65,8 +78,14 @@ window.setupJourneyScroll = function setupJourneyScroll({
       currentScene = scene;
       setActive(scene);
     }
-    seek(scene, movieProgress);
-    if (scene < count - 1 && local >= playbackEnd) seek(scene + 1, 0);
+    const nearSection = bounds.top <= window.innerHeight * 0.3 && bounds.bottom > 0;
+    if (nearSection) {
+      loadClip(scene);
+      // Prepare only the following clip as the current one reaches its end.
+      if (scene < count - 1 && local >= 0.8) loadClip(scene + 1);
+      seek(scene, movieProgress);
+      if (scene < count - 1 && local >= playbackEnd) seek(scene + 1, 0);
+    }
 
     layers.forEach((layer, index) => {
       if (!layer) return;
@@ -107,7 +126,7 @@ window.setupJourneyScroll = function setupJourneyScroll({
     if (!video) return;
     video.pause();
     video.muted = true;
-    video.preload = "auto";
+    video.preload = "none";
     video.addEventListener("seeked", seeked[index]);
     video.addEventListener("loadedmetadata", schedule);
   });

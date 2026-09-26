@@ -93,8 +93,16 @@
     }
 
     function updateFrame() {
+      const bounds = section.getBoundingClientRect();
+      if (bounds.bottom <= 0 || bounds.top >= window.innerHeight) {
+        // A direct link to a later section must not fetch the opening sequence.
+        queue.splice(0).forEach((index) => {
+          if (state[index] === 1) state[index] = 0;
+        });
+        return;
+      }
       const scrollRange = Math.max(1, section.offsetHeight - window.innerHeight);
-      const progress = Math.min(1, Math.max(0, -section.getBoundingClientRect().top / scrollRange));
+      const progress = Math.min(1, Math.max(0, -bounds.top / scrollRange));
       const frame = Math.floor(progress * (FRAME_COUNT - 1));
 
       if (frame !== currentFrame) currentFrame = frame;
