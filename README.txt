@@ -26,9 +26,11 @@ WHAT'S INSIDE
                       clubhouse / garden order
                       *.m4v  original full HD walkthrough films
                       *-720.m4v  original 720p versions
-                      hero.m4v   the film behind the hero headline
+                      hero.m4v   previous opening film (retained as a source)
                       *.mp4      compatibility fallbacks
   images/             logos, renders and video posters
+                      sequence-01/ has 210 high-quality 1920x1080 WebP
+                      frames converted from the supplied 01/ JPG sequence
                       masterplan-takeover.svg draws the full-screen contour
                       transition after the final garden frame
                       masterplan-bridge.svg continues the motif in Masterplan
@@ -53,3 +55,10 @@ section. Each scene scrubs from its first frame to its last frame before the
 crossfade to the next scene begins. After Gardens, scrolling raises a full-screen
 Masterplan graphic before the section content appears. Scrolling back reverses
 the sequence.
+
+OPENING
+On a fresh visit the first sequence frame stays still with the Alpha City logo
+centered. Scrolling advances the 210-frame sequence while the opening stays
+full-screen, and scrolling back reverses it. The first scroll also reveals the
+existing hero content. The original JPG frames remain in 01/; the site serves
+the WebP copies from images/sequence-01/ at the same resolution.
