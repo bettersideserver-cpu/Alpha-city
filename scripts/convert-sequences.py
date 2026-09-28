@@ -1,7 +1,7 @@
-"""Convert the supplied JPG sequences to numbered, full-resolution WebP frames.
+"""Replace updated scroll sequences with full-resolution WebP frames.
 
 Run from any directory: python scripts/convert-sequences.py
-Original JPGs are retained. Existing output frames are skipped.
+The supplied JPGs are kept. Folder 3 is intentionally left unchanged.
 """
 
 from concurrent.futures import ThreadPoolExecutor
@@ -11,27 +11,37 @@ from PIL import Image
 
 
 ROOT = Path(__file__).resolve().parents[1]
+SEQUENCES = (("1", "01"), ("2", "02"), ("4", "04"))
 
 
 def convert(job):
     source, target = job
-    if not target.exists():
-        with Image.open(source) as image:
-            image.convert("RGB").save(target, "WEBP", quality=88, method=6)
+    temporary = target.with_suffix(".webp.tmp")
+    with Image.open(source) as image:
+        image.convert("RGB").save(temporary, "WEBP", quality=95, method=6)
+    temporary.replace(target)
     return target.stat().st_size
 
 
 if __name__ == "__main__":
-    for sequence in ("02", "03", "04"):
-        sources = sorted((ROOT / sequence).glob("*.jpg"))
+    for source_folder, scene in SEQUENCES:
+        sources = sorted((ROOT / source_folder).glob("*.jpg"))
         if not sources:
-            raise SystemExit(f"No JPG frames found in {sequence}/")
-        destination = ROOT / "images" / f"sequence-{sequence}"
+            raise SystemExit(f"No JPG frames found in {source_folder}/")
+        destination = ROOT / "images" / f"sequence-{scene}"
         destination.mkdir(parents=True, exist_ok=True)
         jobs = [(source, destination / f"{index:03}.webp")
                 for index, source in enumerate(sources)]
+        sizes = []
+        print(f"{source_folder} -> sequence-{scene}: converting {len(jobs)} frames", flush=True)
         with ThreadPoolExecutor(max_workers=4) as pool:
-            sizes = list(pool.map(convert, jobs))
+            for size in pool.map(convert, jobs):
+                sizes.append(size)
+                if len(sizes) % 24 == 0 or len(sizes) == len(jobs):
+                    print(f"  {len(sizes)}/{len(jobs)}", flush=True)
+        for old_frame in destination.glob("[0-9][0-9][0-9].webp"):
+            if int(old_frame.stem) >= len(jobs):
+                old_frame.unlink()
         original = sum(source.stat().st_size for source in sources)
-        print(f"{sequence}: {len(sizes)} frames, {sum(sizes) / 1e6:.1f} MB "
-              f"(JPG: {original / 1e6:.1f} MB)", flush=True)
+        print(f"  done: {sum(sizes) / 1e6:.1f} MB WebP "
+              f"(source JPG: {original / 1e6:.1f} MB)", flush=True)

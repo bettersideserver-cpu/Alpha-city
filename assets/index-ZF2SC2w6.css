@@ -5,15 +5,6 @@
   isolation: isolate;
   margin-top: 0;
 }
-.masterplan-rise::before {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  inset: 0 0 auto;
-  height: clamp(12rem, 23vw, 19rem);
-  background: url("../images/masterplan-bridge.svg") center top / 100% 100% no-repeat;
-  pointer-events: none;
-}
 .masterplan-rise > div {
   position: relative;
   z-index: 1;
@@ -25,7 +16,7 @@
   overflow: hidden;
   visibility: hidden;
   color: #241715;
-  background: #f7f4f1 url("../images/masterplan-takeover.svg") center / cover no-repeat;
+  background: linear-gradient(125deg, #f7f4f1, #e9ded6);
   box-shadow: 0 -2rem 5rem rgba(25, 7, 10, .17);
   pointer-events: none;
   will-change: transform;

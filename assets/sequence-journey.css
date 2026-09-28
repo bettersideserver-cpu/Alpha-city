@@ -3,7 +3,7 @@
   --hero-opacity: 1;
   --hero-lift: 0px;
   --shade-opacity: 1;
-  height: 2240svh;
+  height: 2765svh;
 }
 #top .hero-copy, #top .hero-scroll {
   opacity: var(--hero-opacity) !important;
@@ -88,6 +88,199 @@ h1 span { display: block; }
 .hero-scroll .eyebrow { color: #ffffffa6; white-space: nowrap; }
 .hero-scroll-line { width: 1px; height: 38px; background: #ffffff45; }
 
+.sequence-caption {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: clamp(32px, 7vw, 112px);
+  color: #fff;
+  pointer-events: none;
+  opacity: var(--caption-visibility, 0);
+}
+.sequence-caption::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgb(10 10 12 / 43%), rgb(10 10 12 / 13%) 55%, transparent 80%),
+    linear-gradient(180deg, transparent 32%, rgb(12 6 8 / 27%) 58%, rgb(12 6 8 / 79%) 100%);
+}
+.sequence-caption__inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(310px, .75fr);
+  align-items: end;
+  gap: clamp(48px, 6.5vw, 120px);
+  width: 100%;
+  padding-top: clamp(26px, 3vw, 52px);
+  border-top: 1px solid rgb(255 255 255 / 52%);
+  transform: translate3d(0, var(--caption-rise, 24px), 0);
+  text-shadow: 0 2px 24px rgb(0 0 0 / 42%);
+}
+.sequence-caption__primary {
+  min-width: 0;
+  padding-left: clamp(18px, 1.8vw, 30px);
+  border-left: 2px solid rgb(255 255 255 / 82%);
+}
+.sequence-caption__secondary {
+  width: 100%;
+  padding-bottom: 6px;
+}
+.sequence-caption__label, .sequence-caption__next {
+  display: block;
+  font: 600 12px/1.5 var(--font-sans, Arial, sans-serif);
+  letter-spacing: .23em;
+}
+.sequence-caption__label { color: rgb(255 255 255 / 94%); }
+.sequence-caption__title {
+  margin: 20px 0 0;
+  font: 400 clamp(3.5rem, 7.4vw, 8.5rem)/.97 var(--font-display, Georgia, serif);
+  letter-spacing: -.042em;
+}
+.sequence-caption__title span { display: block; }
+.sequence-caption__description {
+  max-width: 620px;
+  font: 400 clamp(1.125rem, 1.48vw, 1.6rem)/1.5 var(--font-sans, Arial, sans-serif);
+  color: rgb(255 255 255 / 96%);
+}
+.sequence-caption__progress {
+  display: block;
+  width: min(300px, 100%);
+  height: 1px;
+  margin-top: 32px;
+  background: rgb(255 255 255 / 38%);
+}
+.sequence-caption__progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  transform: scaleX(var(--caption-line, 0));
+  transform-origin: left;
+}
+.sequence-caption__next { margin-top: 15px; color: rgb(255 255 255 / 86%); }
+
+.sequence-sky-bridge {
+  position: absolute;
+  z-index: 6;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: 8% 10%;
+  overflow: hidden;
+  pointer-events: none;
+  color: #fff;
+  opacity: var(--bridge-opacity, 0);
+  background: linear-gradient(112deg, #314776 0%, #718db6 56%, #b3c0d2 100%);
+}
+.sequence-sky-bridge::before {
+  content: "";
+  position: absolute;
+  inset: -4%;
+  background: url("../images/sequence-04/000.webp?v=2") center / cover no-repeat;
+  filter: blur(12px) saturate(.9);
+  opacity: .74;
+  transform: scale(1.04);
+}
+.sequence-sky-bridge::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 78% at 91% 16%, rgb(239 247 255 / 22%), transparent 76%),
+    linear-gradient(90deg, rgb(27 49 89 / 34%), transparent 73%),
+    linear-gradient(180deg, transparent 48%, rgb(34 61 102 / 14%));
+}
+.sequence-sky-bridge__inner {
+  position: relative;
+  z-index: 1;
+  width: min(940px, 100%);
+  opacity: var(--bridge-words, 0);
+  transform: translate3d(0, var(--bridge-rise, 28px), 0);
+  text-shadow: 0 3px 26px rgb(23 44 81 / 13%);
+}
+.sequence-sky-bridge__label {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font: 600 10px/1.5 Arial, sans-serif;
+  letter-spacing: .34em;
+  color: rgb(255 255 255 / 80%);
+}
+.sequence-sky-bridge__label > span {
+  display: block;
+  width: 36px;
+  height: 1px;
+  flex: none;
+  background: rgb(255 255 255 / 80%);
+}
+.sequence-sky-bridge__title {
+  margin: 25px 0 25px;
+  font: 400 clamp(4rem, 9vw, 10.5rem)/.94 Georgia, serif;
+  letter-spacing: -.06em;
+}
+.sequence-sky-bridge__title em { font-weight: 400; }
+.sequence-sky-bridge__description {
+  max-width: 500px;
+  font: 300 clamp(1rem, 1.35vw, 1.25rem)/1.6 Arial, sans-serif;
+  color: rgb(255 255 255 / 89%);
+}
+.sequence-sky-bridge__rule {
+  display: block;
+  width: min(240px, 60vw);
+  height: 1px;
+  margin-top: 34px;
+  background: rgb(255 255 255 / 28%);
+}
+.sequence-sky-bridge__rule span {
+  display: block;
+  width: 41%;
+  height: 100%;
+  background: #fff;
+}
+.sequence-sky-bridge__folio {
+  position: absolute;
+  z-index: 1;
+  right: clamp(32px, 7vw, 112px);
+  bottom: clamp(32px, 7vw, 90px);
+  text-align: right;
+  font: 400 clamp(1.2rem, 1.8vw, 1.8rem)/1.1 Georgia, serif;
+  letter-spacing: .06em;
+  color: rgb(255 255 255 / 77%);
+  opacity: var(--bridge-words, 0);
+}
+.sequence-sky-bridge__folio span { opacity: .45; }
+.sequence-sky-bridge__folio small {
+  font: 600 9px/2 Arial, sans-serif;
+  letter-spacing: .26em;
+}
+
+@media (max-width: 900px) {
+  .sequence-caption__inner {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .sequence-caption__secondary {
+    padding-left: clamp(18px, 1.8vw, 30px);
+  }
+}
+
+@media (max-width: 640px) {
+  .sequence-caption { padding: 28px 7% 54px; }
+  .sequence-caption__label, .sequence-caption__next { font-size: 11px; letter-spacing: .18em; }
+  .sequence-caption__title { margin-top: 16px; font-size: clamp(3.2rem, 14vw, 5.25rem); }
+  .sequence-caption__description { font-size: clamp(1.05rem, 4.1vw, 1.25rem); line-height: 1.45; }
+  .sequence-caption__progress { margin-top: 22px; }
+  .sequence-sky-bridge { padding: 8%; }
+  .sequence-sky-bridge__title { font-size: clamp(3.7rem, 15vw, 6rem); }
+  .sequence-sky-bridge__description { max-width: 290px; }
+  .sequence-sky-bridge__folio { right: 8%; bottom: 36px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   #top .hero-copy, #top .hero-scroll { transform: none; }
+  .sequence-caption__inner { transform: none; }
+  .sequence-sky-bridge__inner { transform: none; }
 }

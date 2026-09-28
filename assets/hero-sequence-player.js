@@ -1,14 +1,18 @@
 (() => {
   "use strict";
 
-  // Positions are viewport heights. Frames and dissolves follow scroll exactly.
+  // Positions are viewport heights. Each scene holds its last frame for its story.
   const SCENES = [
-    { folder: "01", count: 210, start: 0, end: 4.2, blendEnd: 4.5 },
-    { folder: "02", count: 216, start: 4.5, end: 8.8, blendEnd: 9.15 },
-    { folder: "03", count: 288, start: 9.15, end: 14.9, blendEnd: 15.25 },
-    { folder: "04", count: 288, start: 15.25, end: 21 },
+    { folder: "01", count: 288, start: 0, end: 5.6, blendStart: 7, blendEnd: 7.35,
+      label: "01 / THE ENTRANCE", title: ["The arrival"], description: "The first view of a city made for the way you want to live." },
+    { folder: "02", count: 216, start: 7.35, end: 11.55, blendStart: 12.95, blendEnd: 13.3,
+      label: "02 / THE HIGH STREET", title: ["Everyday,", "within reach"], description: "A lively commercial heart connects the places you visit every day." },
+    { folder: "03", count: 288, start: 13.3, end: 18.9, captionExit: 19.95, blendStart: 20.7, blendEnd: 21,
+      label: "03 / THE CLUBHOUSE", title: ["Space to come", "together"], description: "Forty-five thousand square feet for leisure, quiet moments and time with neighbours." },
+    { folder: "04", count: 216, start: 21, end: 25.25,
+      label: "04 / THE GARDENS", title: ["A greener", "everyday"], description: "Open green is woven through the city, always a short walk from home." },
   ];
-  const TOTAL_TRAVEL = 21.4;
+  const TOTAL_TRAVEL = 26.65;
   const MAX_LOADS = 6;
   const clamp = (n) => Math.max(0, Math.min(1, n));
   const smooth = (n) => { const t = clamp(n); return t * t * (3 - 2 * t); };
@@ -21,14 +25,52 @@
   const anchor = document.createElement("span");
   anchor.id = "journey";
   anchor.className = "journey-anchor";
-  anchor.dataset.position = "4.5";
+  anchor.dataset.position = String(SCENES[1].start);
   anchor.setAttribute("aria-hidden", "true");
   section.append(anchor);
+  const gardenAnchor = document.createElement("span");
+  gardenAnchor.id = "gardens";
+  gardenAnchor.className = "journey-anchor";
+  gardenAnchor.dataset.position = "21";
+  gardenAnchor.setAttribute("aria-hidden", "true");
+  section.append(gardenAnchor);
 
   const nav = document.querySelector("main > header");
   const hero = stage.querySelector(":scope > .flex-1");
   hero.classList.add("hero-copy");
   stage.querySelectorAll(":scope > .pointer-events-none.absolute.inset-0").forEach((shade) => shade.classList.add("sequence-hero-shade"));
+  canvas.style.backgroundImage = "url('images/sequence-01/000.webp?v=2')";
+  const captions = SCENES.map((scene, index) => {
+    const caption = document.createElement("section");
+    caption.className = "sequence-caption";
+    caption.setAttribute("aria-label", scene.label.replace(/^\d+ \/ /, ""));
+    caption.setAttribute("aria-hidden", "true");
+    caption.innerHTML = `<div class="sequence-caption__inner">
+      <div class="sequence-caption__primary">
+        <span class="sequence-caption__label">${scene.label}</span>
+        <h2 class="sequence-caption__title">${scene.title.map((line) => `<span>${line}</span>`).join("")}</h2>
+      </div>
+      <div class="sequence-caption__secondary">
+        <p class="sequence-caption__description">${scene.description}</p>
+        <span class="sequence-caption__progress" aria-hidden="true"><span></span></span>
+        <span class="sequence-caption__next">${index < SCENES.length - 1 ? "SCROLL TO EXPLORE" : "CONTINUE TO THE MASTERPLAN"}</span>
+      </div>
+    </div>`;
+    stage.append(caption);
+    return caption;
+  });
+  const skyBridge = document.createElement("section");
+  skyBridge.className = "sequence-sky-bridge";
+  skyBridge.setAttribute("aria-label", "Introduction to the gardens");
+  skyBridge.setAttribute("aria-hidden", "true");
+  skyBridge.innerHTML = `<div class="sequence-sky-bridge__inner">
+    <span class="sequence-sky-bridge__label"><span aria-hidden="true"></span>FROM THE CLUBHOUSE TO THE GARDENS</span>
+    <h2 class="sequence-sky-bridge__title">The city opens<br><em>to the sky.</em></h2>
+    <p class="sequence-sky-bridge__description">Where shared spaces give way to open green.</p>
+    <span class="sequence-sky-bridge__rule" aria-hidden="true"><span></span></span>
+  </div>
+  <span class="sequence-sky-bridge__folio" aria-hidden="true">04 <span>/</span> 04<br><small>THE GARDENS</small></span>`;
+  stage.append(skyBridge);
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const compact = window.matchMedia("(max-width: 640px)");
   const cache = new Map();
@@ -42,7 +84,7 @@
   let current = { scene: 0, frame: 0, blend: 0 };
 
   const keyFor = (scene, frame) => `${scene}:${frame}`;
-  const pathFor = (scene, frame) => `images/sequence-${SCENES[scene].folder}/${String(frame).padStart(3, "0")}.webp`;
+  const pathFor = (scene, frame) => `images/sequence-${SCENES[scene].folder}/${String(frame).padStart(3, "0")}.webp?v=2`;
 
   function trimCache() {
     // Each decoded Full-HD frame is ~8 MB. Revisited frames use the HTTP cache.
@@ -166,10 +208,37 @@
     let scene = 0;
     while (scene < SCENES.length - 1 && position >= SCENES[scene + 1].start) scene++;
     const info = SCENES[scene];
-    const progress = clamp((position - info.start) / (info.end - info.start));
+    const playStart = info.playStart ?? info.start;
+    const progress = clamp((position - playStart) / (info.end - playStart));
     const blendStart = info.blendStart ?? info.end;
     const blend = info.blendEnd ? smooth((position - blendStart) / (info.blendEnd - blendStart)) : 0;
     current = { scene, frame: Math.round(progress * (info.count - 1)), blend };
+
+    captions.forEach((caption, index) => {
+      const item = SCENES[index];
+      const exit = item.captionExit ?? item.blendStart ?? TOTAL_TRAVEL;
+      const enterAmount = smooth((position - item.end) / .42);
+      const leaveAmount = index < SCENES.length - 1
+        ? 1 - smooth((position - (exit - .28)) / .35)
+        : 1 - smooth((position - (TOTAL_TRAVEL - .55)) / .55);
+      // A rapid scroll may reach the hold before its final WebP has decoded.
+      // Keep the story hidden until that actual last frame is ready to paint.
+      const finalFrameReady = cache.get(keyFor(index, item.count - 1))?.status === "ready";
+      const visibility = finalFrameReady ? enterAmount * leaveAmount : 0;
+      caption.style.setProperty("--caption-visibility", String(visibility));
+      caption.style.setProperty("--caption-rise", `${reducedMotion.matches ? 0 : (1 - enterAmount) * 24}px`);
+      caption.style.setProperty("--caption-line", String(smooth((position - item.end) / .9)));
+      caption.setAttribute("aria-hidden", visibility < .2 ? "true" : "false");
+    });
+    const bridgeArrival = smooth((position - 19.85) / .5);
+    const bridgeDeparture = 1 - smooth((position - 21) / .7);
+    const bridgeOpacity = bridgeArrival * bridgeDeparture;
+    const bridgeWords = smooth((position - 20.15) / .4)
+      * (1 - smooth((position - 21.02) / .43));
+    skyBridge.style.setProperty("--bridge-opacity", String(bridgeOpacity));
+    skyBridge.style.setProperty("--bridge-words", String(bridgeWords));
+    skyBridge.style.setProperty("--bridge-rise", `${reducedMotion.matches ? 0 : (1 - bridgeWords) * 28}px`);
+    skyBridge.setAttribute("aria-hidden", bridgeOpacity * bridgeWords < .2 ? "true" : "false");
 
     // Logo opening, hero, then a quiet 8px fade at the middle arrival frame.
     const fade = smooth((position - 2.05) / .65);
