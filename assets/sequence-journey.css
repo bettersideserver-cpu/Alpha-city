@@ -3,7 +3,7 @@
   --hero-opacity: 1;
   --hero-lift: 0px;
   --shade-opacity: 1;
-  height: 2765svh;
+  height: 2520svh;
 }
 #top .hero-copy, #top .hero-scroll {
   opacity: var(--hero-opacity) !important;
@@ -11,6 +11,8 @@
   transition: none !important;
 }
 #top .sequence-hero-shade { opacity: var(--shade-opacity); }
+#top.sequence-past-opening .hero-intro-mark,
+#top.sequence-past-opening .hero-intro-shade { visibility: hidden; }
 header.sequence-nav-in-hero {
   opacity: var(--sequence-nav-opacity, 0) !important;
   transform: translate3d(0, var(--sequence-nav-lift, 0px), 0) !important;
@@ -162,6 +164,96 @@ h1 span { display: block; }
 }
 .sequence-caption__next { margin-top: 15px; color: rgb(255 255 255 / 86%); }
 
+.sequence-clubhouse-intro {
+  position: absolute;
+  z-index: 6;
+  inset: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+  color: #fffdf5;
+}
+.sequence-clubhouse-intro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgb(35 61 94 / 16%), transparent 75%);
+  opacity: var(--intro-shade, 0);
+}
+.clubhouse-intro__photo {
+  position: absolute;
+  margin: 0;
+  width: 21%;
+  opacity: 0;
+  transform: translate3d(var(--photo-x, 0px), var(--photo-y, 0px), 0) rotate(var(--photo-angle)) scale(var(--photo-scale, 1));
+  will-change: transform, opacity;
+}
+.clubhouse-intro__photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1.52;
+  object-fit: cover;
+  border-radius: 2px;
+  box-shadow: 0 18px 50px rgb(27 50 75 / 20%);
+}
+.clubhouse-intro__photo figcaption {
+  margin-top: 10px;
+  font: 400 9px/1.4 var(--font-sans, Arial, sans-serif);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgb(255 253 245 / 83%);
+}
+.clubhouse-intro__photo--welcome { left: 7%; top: 8%; --photo-angle: -8deg; }
+.clubhouse-intro__photo--play { right: 9%; top: 6%; width: 17%; --photo-angle: 7deg; }
+.clubhouse-intro__photo--lounge { left: -3%; bottom: 12%; width: 25%; --photo-angle: 6deg; }
+.clubhouse-intro__photo--lounge figcaption { padding-left: 18%; }
+.clubhouse-intro__photo--dine { right: -2%; bottom: 10%; width: 26%; --photo-angle: -7deg; }
+.clubhouse-intro__copy {
+  position: absolute;
+  z-index: 1;
+  top: 34%;
+  left: 16%;
+  width: 68%;
+  text-align: center;
+  opacity: 0;
+  will-change: transform, opacity;
+  text-shadow: 0 2px 24px rgb(44 72 106 / 10%);
+}
+.clubhouse-intro__eyebrow {
+  display: block;
+  font: 500 10px/1.5 var(--font-sans, Arial, sans-serif);
+  letter-spacing: .3em;
+}
+.clubhouse-intro__copy h2 {
+  margin: 24px 0 22px;
+  font: 400 clamp(3.8rem, 7.1vw, 9rem)/.94 Georgia, serif;
+  letter-spacing: -.055em;
+}
+.clubhouse-intro__copy h2 em { font-weight: 400; }
+.clubhouse-intro__copy p {
+  margin: 0 auto;
+  max-width: 360px;
+  font: 400 13px/1.65 var(--font-sans, Arial, sans-serif);
+  letter-spacing: .02em;
+  color: rgb(255 253 245 / 88%);
+}
+.clubhouse-intro__scroll {
+  position: absolute;
+  left: 50%;
+  bottom: 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  translate: -50% 0;
+  width: max-content;
+  opacity: 0;
+  font: 500 9px/1.5 var(--font-sans, Arial, sans-serif);
+  letter-spacing: .24em;
+}
+.clubhouse-intro__scroll > span { width: 1px; height: 28px; background: rgb(255 253 245 / 55%); }
+
 .sequence-sky-bridge {
   position: absolute;
   z-index: 6;
@@ -268,6 +360,17 @@ h1 span { display: block; }
 }
 
 @media (max-width: 640px) {
+  .clubhouse-intro__photo--welcome { left: -4%; top: 9%; width: 45%; }
+  .clubhouse-intro__photo--play { right: -5%; top: 13%; width: 39%; }
+  .clubhouse-intro__photo--lounge { left: -8%; bottom: 15%; width: 44%; }
+  .clubhouse-intro__photo--dine { right: -10%; bottom: 13%; width: 48%; }
+  .clubhouse-intro__photo figcaption { font-size: 7px; letter-spacing: .1em; margin-top: 7px; }
+  .clubhouse-intro__photo--welcome figcaption, .clubhouse-intro__photo--lounge figcaption { padding-left: 22%; }
+  .clubhouse-intro__copy { left: 5%; top: 35%; width: 90%; }
+  .clubhouse-intro__eyebrow { font-size: 8px; letter-spacing: .2em; }
+  .clubhouse-intro__copy h2 { margin: 21px 0 20px; font-size: clamp(2.65rem, 11.8vw, 4.6rem); }
+  .clubhouse-intro__copy p { max-width: 250px; font-size: 11px; }
+  .clubhouse-intro__scroll { font-size: 8px; bottom: 4%; }
   .sequence-caption { padding: 28px 7% 54px; }
   .sequence-caption__label, .sequence-caption__next { font-size: 11px; letter-spacing: .18em; }
   .sequence-caption__title { margin-top: 16px; font-size: clamp(3.2rem, 14vw, 5.25rem); }
@@ -280,6 +383,7 @@ h1 span { display: block; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .clubhouse-intro__photo { transform: rotate(var(--photo-angle)); }
   #top .hero-copy, #top .hero-scroll { transform: none; }
   .sequence-caption__inner { transform: none; }
   .sequence-sky-bridge__inner { transform: none; }

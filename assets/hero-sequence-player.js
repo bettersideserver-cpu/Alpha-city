@@ -5,14 +5,14 @@
   const SCENES = [
     { folder: "01", count: 288, start: 0, end: 5.6, blendStart: 7, blendEnd: 7.35,
       label: "01 / THE ENTRANCE", title: ["The arrival"], description: "The first view of a city made for the way you want to live." },
-    { folder: "02", count: 216, start: 7.35, end: 11.55, blendStart: 12.95, blendEnd: 13.3,
-      label: "02 / THE HIGH STREET", title: ["Everyday,", "within reach"], description: "A lively commercial heart connects the places you visit every day." },
-    { folder: "03", count: 288, start: 13.3, end: 18.9, captionExit: 19.95, blendStart: 20.7, blendEnd: 21,
-      label: "03 / THE CLUBHOUSE", title: ["Space to come", "together"], description: "Forty-five thousand square feet for leisure, quiet moments and time with neighbours." },
-    { folder: "04", count: 216, start: 21, end: 25.25,
-      label: "04 / THE GARDENS", title: ["A greener", "everyday"], description: "Open green is woven through the city, always a short walk from home." },
+    { folder: "03", count: 360, version: 3, start: 7.35, playStart: 9.45, end: 16.45, captionExit: 17.5, blendStart: 18.25, blendEnd: 18.55,
+      label: "02 / THE CLUBHOUSE", title: ["Space to come", "together"], description: "Forty-five thousand square feet for leisure, quiet moments and time with neighbours." },
+    { folder: "04", count: 216, start: 18.55, end: 22.8,
+      label: "03 / THE GARDENS", title: ["A greener", "everyday"], description: "Open green is woven through the city, always a short walk from home." },
   ];
-  const TOTAL_TRAVEL = 26.65;
+  const TOTAL_TRAVEL = 24.2;
+  const CLUBHOUSE = SCENES.find((scene) => scene.folder === "03");
+  const GARDENS = SCENES.find((scene) => scene.folder === "04");
   const MAX_LOADS = 6;
   const clamp = (n) => Math.max(0, Math.min(1, n));
   const smooth = (n) => { const t = clamp(n); return t * t * (3 - 2 * t); };
@@ -31,7 +31,7 @@
   const gardenAnchor = document.createElement("span");
   gardenAnchor.id = "gardens";
   gardenAnchor.className = "journey-anchor";
-  gardenAnchor.dataset.position = "21";
+  gardenAnchor.dataset.position = String(GARDENS.start);
   gardenAnchor.setAttribute("aria-hidden", "true");
   section.append(gardenAnchor);
 
@@ -59,6 +59,39 @@
     stage.append(caption);
     return caption;
   });
+  const clubhouseIntro = document.createElement("section");
+  clubhouseIntro.className = "sequence-clubhouse-intro";
+  clubhouseIntro.setAttribute("aria-label", "Life at the clubhouse");
+  clubhouseIntro.setAttribute("aria-hidden", "true");
+  clubhouseIntro.innerHTML = `
+    <div class="clubhouse-intro__photos" aria-hidden="true">
+      <figure class="clubhouse-intro__photo clubhouse-intro__photo--welcome">
+        <img src="images/clubhouse-intro/reception.webp" alt="" width="800" height="527" decoding="async">
+        <figcaption>01 &nbsp; A warm welcome</figcaption>
+      </figure>
+      <figure class="clubhouse-intro__photo clubhouse-intro__photo--play">
+        <img src="images/clubhouse-intro/play.webp" alt="" width="800" height="525" decoding="async">
+        <figcaption>02 &nbsp; Little moments of joy</figcaption>
+      </figure>
+      <figure class="clubhouse-intro__photo clubhouse-intro__photo--lounge">
+        <img src="images/clubhouse-intro/lounge.webp" alt="" width="800" height="527" decoding="async">
+        <figcaption>03 &nbsp; Stay a little longer</figcaption>
+      </figure>
+      <figure class="clubhouse-intro__photo clubhouse-intro__photo--dine">
+        <img src="images/clubhouse-intro/dining.webp" alt="" width="800" height="525" decoding="async">
+        <figcaption>04 &nbsp; Gather around</figcaption>
+      </figure>
+    </div>
+    <div class="clubhouse-intro__copy">
+      <span class="clubhouse-intro__eyebrow">THE CLUBHOUSE &nbsp; / &nbsp; 45,000 SQ. FT.</span>
+      <h2>Life, beautifully<br><em>shared.</em></h2>
+      <p>A place to slow down. A reason to come together.</p>
+    </div>
+    <span class="clubhouse-intro__scroll" aria-hidden="true">SCROLL INTO THE CLUBHOUSE<span></span></span>`;
+  stage.append(clubhouseIntro);
+  const introPhotos = [...clubhouseIntro.querySelectorAll(".clubhouse-intro__photo")];
+  const introCopy = clubhouseIntro.querySelector(".clubhouse-intro__copy");
+  const introScroll = clubhouseIntro.querySelector(".clubhouse-intro__scroll");
   const skyBridge = document.createElement("section");
   skyBridge.className = "sequence-sky-bridge";
   skyBridge.setAttribute("aria-label", "Introduction to the gardens");
@@ -69,7 +102,7 @@
     <p class="sequence-sky-bridge__description">Where shared spaces give way to open green.</p>
     <span class="sequence-sky-bridge__rule" aria-hidden="true"><span></span></span>
   </div>
-  <span class="sequence-sky-bridge__folio" aria-hidden="true">04 <span>/</span> 04<br><small>THE GARDENS</small></span>`;
+  <span class="sequence-sky-bridge__folio" aria-hidden="true">03 <span>/</span> 03<br><small>THE GARDENS</small></span>`;
   stage.append(skyBridge);
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const compact = window.matchMedia("(max-width: 640px)");
@@ -84,7 +117,7 @@
   let current = { scene: 0, frame: 0, blend: 0 };
 
   const keyFor = (scene, frame) => `${scene}:${frame}`;
-  const pathFor = (scene, frame) => `images/sequence-${SCENES[scene].folder}/${String(frame).padStart(3, "0")}.webp?v=2`;
+  const pathFor = (scene, frame) => `images/sequence-${SCENES[scene].folder}/${String(frame).padStart(3, "0")}.webp?v=${SCENES[scene].version ?? 2}`;
 
   function trimCache() {
     // Each decoded Full-HD frame is ~8 MB. Revisited frames use the HTTP cache.
@@ -203,6 +236,7 @@
     const travel = Math.max(1, section.offsetHeight - stage.clientHeight);
     const bounds = section.getBoundingClientRect();
     const position = clamp(-bounds.top / travel) * TOTAL_TRAVEL;
+    section.classList.toggle("sequence-past-opening", position >= CLUBHOUSE.start - .3);
     if (Math.abs(position - previousPosition) > .001) direction = position > previousPosition ? 1 : -1;
     previousPosition = position;
     let scene = 0;
@@ -213,6 +247,29 @@
     const blendStart = info.blendStart ?? info.end;
     const blend = info.blendEnd ? smooth((position - blendStart) / (info.blendEnd - blendStart)) : 0;
     current = { scene, frame: Math.round(progress * (info.count - 1)), blend };
+
+    // The opening sky stays on frame zero until every part of the intro has left.
+    // These phases are scroll driven in both directions, with no timed animation.
+    const introPosition = position - CLUBHOUSE.start;
+    const introReady = cache.get(keyFor(SCENES.indexOf(CLUBHOUSE), 0))?.status === "ready";
+    const introArrival = smooth((introPosition + .26) / .38);
+    const introDeparture = smooth((introPosition - 1.03) / .87);
+    const introVisibility = introReady ? introArrival * (1 - introDeparture) : 0;
+    clubhouseIntro.style.visibility = introReady && introPosition > -.26 && position < CLUBHOUSE.playStart ? "visible" : "hidden";
+    clubhouseIntro.style.setProperty("--intro-shade", String(introVisibility));
+    clubhouseIntro.setAttribute("aria-hidden", introVisibility < .2 ? "true" : "false");
+    introCopy.style.opacity = String(introVisibility);
+    introCopy.style.transform = reducedMotion.matches ? "none"
+      : `translate3d(0, ${(1 - introArrival) * 20 - introDeparture * 32}px, 0)`;
+    introScroll.style.opacity = String(introReady ? introArrival * (1 - smooth((introPosition - .65) / .5)) : 0);
+    introPhotos.forEach((photo, index) => {
+      const arrival = smooth((introPosition + .26 - index * .035) / .38);
+      const departure = smooth((introPosition - .8 - index * .055) / .87);
+      photo.style.opacity = String(introReady ? arrival * (1 - departure) : 0);
+      photo.style.setProperty("--photo-y", `${reducedMotion.matches ? 0 : (1 - arrival) * -58 + departure * -110}px`);
+      photo.style.setProperty("--photo-x", `${reducedMotion.matches ? 0 : departure * (index % 2 ? 34 : -34)}px`);
+      photo.style.setProperty("--photo-scale", String(reducedMotion.matches ? 1 : 1 - (1 - arrival) * .04 - departure * .06));
+    });
 
     captions.forEach((caption, index) => {
       const item = SCENES[index];
@@ -230,11 +287,11 @@
       caption.style.setProperty("--caption-line", String(smooth((position - item.end) / .9)));
       caption.setAttribute("aria-hidden", visibility < .2 ? "true" : "false");
     });
-    const bridgeArrival = smooth((position - 19.85) / .5);
-    const bridgeDeparture = 1 - smooth((position - 21) / .7);
+    const bridgeArrival = smooth((position - (CLUBHOUSE.captionExit - .1)) / .5);
+    const bridgeDeparture = 1 - smooth((position - GARDENS.start) / .7);
     const bridgeOpacity = bridgeArrival * bridgeDeparture;
-    const bridgeWords = smooth((position - 20.15) / .4)
-      * (1 - smooth((position - 21.02) / .43));
+    const bridgeWords = smooth((position - (CLUBHOUSE.end + 1.25)) / .4)
+      * (1 - smooth((position - (GARDENS.start + .02)) / .43));
     skyBridge.style.setProperty("--bridge-opacity", String(bridgeOpacity));
     skyBridge.style.setProperty("--bridge-words", String(bridgeWords));
     skyBridge.style.setProperty("--bridge-rise", `${reducedMotion.matches ? 0 : (1 - bridgeWords) * 28}px`);

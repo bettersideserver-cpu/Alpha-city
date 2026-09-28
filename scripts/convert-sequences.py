@@ -1,7 +1,7 @@
-"""Replace updated scroll sequences with full-resolution WebP frames.
+"""Replace sequence 03 with the supplied full-resolution JPG frames.
 
 Run from any directory: python scripts/convert-sequences.py
-The supplied JPGs are kept. Folder 3 is intentionally left unchanged.
+The supplied JPGs in 03/ are kept. Existing WebP frames are replaced atomically.
 """
 
 from concurrent.futures import ThreadPoolExecutor
@@ -11,7 +11,7 @@ from PIL import Image
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SEQUENCES = (("1", "01"), ("2", "02"), ("4", "04"))
+SEQUENCES = (("03", "03"),)
 
 
 def convert(job):
