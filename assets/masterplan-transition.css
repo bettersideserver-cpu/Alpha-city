@@ -1,4 +1,4 @@
-/* A quiet image dissolve from the last garden frame into the masterplan. */
+/* The masterplan copy follows the final sequence without an extra image panel. */
 .masterplan-rise {
   display: flex;
   flex-direction: column;
@@ -10,45 +10,69 @@
 }
 
 .masterplan-rise > div:first-child {
-  order: 2;
+  order: 1;
   z-index: 2;
   display: flex;
   flex-direction: column;
   justify-content: center;
   min-height: 100svh;
-  padding-top: clamp(5rem, 11vh, 8rem);
-  padding-bottom: clamp(5rem, 11vh, 9rem);
-  background: #f7f4f1;
+  padding-top: clamp(4rem, 8vh, 7rem);
+  padding-bottom: clamp(4rem, 8vh, 7rem);
+  background: radial-gradient(circle at 92% 10%, rgb(255 255 255 / 76%), transparent 38%), #f7f4f1;
   box-shadow: 0 -2rem 5rem rgb(22 18 16 / 9%);
 }
 
+.masterplan-details {
+  display: grid;
+  grid-template-columns: minmax(190px, .38fr) minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 90px);
+  width: 100%;
+  margin-top: clamp(38px, 6vh, 78px);
+  padding-top: clamp(20px, 3vh, 32px);
+  border-top: 1px solid #cfc6bd;
+}
+.masterplan-details__eyebrow {
+  color: #af4858;
+  font: 600 10px/1.5 var(--font-sans, Arial, sans-serif);
+  letter-spacing: .22em;
+}
+.masterplan-details__heading p {
+  margin-top: 13px;
+  color: #281f1c;
+  font: 400 clamp(1.45rem, 2.1vw, 2.15rem)/1.18 var(--font-display, Georgia, serif);
+  letter-spacing: -.025em;
+}
+.masterplan-details__heading em { font-weight: 400; }
+.masterplan-details__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(18px, 2.5vw, 42px);
+}
+.masterplan-details__grid article {
+  min-width: 0;
+  padding-left: clamp(14px, 1.5vw, 24px);
+  border-left: 1px solid #ded5cc;
+}
+.masterplan-details__number {
+  color: #af4858;
+  font: 600 10px/1.4 var(--font-sans, Arial, sans-serif);
+  letter-spacing: .1em;
+}
+.masterplan-details__grid h3 {
+  margin-top: 13px;
+  color: #221d1a;
+  font: 400 clamp(1.18rem, 1.5vw, 1.55rem)/1.16 var(--font-display, Georgia, serif);
+  letter-spacing: -.025em;
+}
+.masterplan-details__grid p {
+  margin-top: 9px;
+  max-width: 27ch;
+  color: #6b625d;
+  font: 400 clamp(.79rem, .92vw, .93rem)/1.56 var(--font-sans, Arial, sans-serif);
+}
+
 .masterplan-rise > div:nth-child(2) {
-  order: 1;
-  z-index: 1;
-  height: 135svh;
-  padding: 0;
-  margin-top: -12svh;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12svh);
-  mask-image: linear-gradient(to bottom, transparent 0%, #000 12svh);
-}
-
-.masterplan-rise > div:nth-child(2) > div {
-  position: sticky;
-  top: 0;
-  width: 100%;
-  height: 100svh;
-  min-height: 640px;
-  aspect-ratio: auto;
-}
-
-.masterplan-rise > div:nth-child(2) img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.masterplan-rise > div:nth-child(2) .reveal {
-  transform: none !important;
+  display: none;
 }
 
 .masterplan-rise > div:first-child .reveal {
@@ -66,18 +90,25 @@
   }
 }
 
+@media (max-width: 900px) {
+  .masterplan-details { grid-template-columns: 1fr; gap: 24px; }
+}
+
+@media (max-height: 800px) and (min-width: 901px) {
+  .masterplan-rise > div:first-child { padding-top: 46px; padding-bottom: 42px; }
+  .masterplan-rise > div:first-child > .reveal.mb-14 { margin-bottom: 36px; }
+  .masterplan-details { margin-top: 31px; padding-top: 17px; }
+}
+
 @media (max-width: 640px) {
   .masterplan-rise > div:first-child {
     padding-top: 4rem;
     padding-bottom: 4rem;
   }
-  .masterplan-rise > div:nth-child(2) {
-    height: 115svh;
-    margin-top: -10svh;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 10svh);
-    mask-image: linear-gradient(to bottom, transparent 0%, #000 10svh);
-  }
-  .masterplan-rise > div:nth-child(2) > div {
-    min-height: 0;
-  }
+  .masterplan-details { grid-template-columns: 1fr; gap: 26px; margin-top: 38px; }
+  .masterplan-details__heading p { font-size: 1.7rem; }
+  .masterplan-details__grid { grid-template-columns: 1fr; gap: 22px; }
+  .masterplan-details__grid article { padding-left: 18px; }
+  .masterplan-details__grid h3 { margin-top: 7px; }
+  .masterplan-details__grid p { max-width: 48ch; margin-top: 5px; font-size: .9rem; }
 }
